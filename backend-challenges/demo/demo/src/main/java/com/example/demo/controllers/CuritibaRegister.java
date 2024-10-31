@@ -18,11 +18,12 @@ public class CuritibaRegister {
     @RequestMapping()
     public ResponseEntity<CuritibaData> register(Integer cep, String cpf) {
 
-        // String uri = "https://viacep.com.br/ws/" + cep + "/json/";
-        // RestTemplate restTemplate = new RestTemplate();
-        // String result = restTemplate.getForObject(uri, String.class);
+        //-------------------------------CEP-----------------------------------
+        String uri = "https://viacep.com.br/ws/" + cep + "/json/";
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri, String.class);
 
-        // System.out.println(result);
+        System.out.println(result);
         
 
         // String jsonCep = @RequestMapping("viacep.com.br/ws/" + cep + "/json/");
@@ -31,6 +32,8 @@ public class CuritibaRegister {
         //     return ResponseEntity.notFound().build();
         // }
 
+
+        //-------------------Verificação CPF-----------------------------------
         Integer digito = 0;
         Integer somaDigito = 0;
         Integer primeiroDigito = 0;
