@@ -11,7 +11,7 @@ import com.example.demo.dto.LoginData;
 import com.example.demo.services.LoginService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/userController")
 public class UserController {
 
     @Autowired

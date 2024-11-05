@@ -4,12 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.model.User;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.JwtTokenService;
+import com.example.demo.services.PasswordEncoderService;
 import com.example.demo.services.UserService;
 
-public class UserImpl implements UserService {
+public class UserSecurityImpl implements UserService {
 
     @Autowired
     UserRepository repo;
+
+    @Autowired
+    PasswordEncoderService service;
+
+    
 
     @Override
     public User login(String login, String password) {
@@ -28,6 +35,7 @@ public class UserImpl implements UserService {
 
     @Override
     public User addUser(String username, String password, String email) {
+
         var userName = repo.findByUsername(username);
         var userEmail = repo.findByEmail(email);
 
@@ -42,7 +50,7 @@ public class UserImpl implements UserService {
         var user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(service.encode(password));
         repo.saveAndFlush(user);
 
         return user;
@@ -110,7 +118,6 @@ public class UserImpl implements UserService {
 
     @Override
     public Boolean changePass(String username, String senha, String newPassword, String repeatPassword) {
-
         var user = repo.findByUsername(username);
 
         if(user.isEmpty()) {
@@ -129,5 +136,6 @@ public class UserImpl implements UserService {
 
         return false;
     }
-        
+    
+    
 }

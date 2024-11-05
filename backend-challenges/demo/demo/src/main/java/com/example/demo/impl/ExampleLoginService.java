@@ -20,7 +20,5 @@ public class ExampleLoginService implements LoginService {
             return -1;
 
         return 1;
-
-        
     }
 }
