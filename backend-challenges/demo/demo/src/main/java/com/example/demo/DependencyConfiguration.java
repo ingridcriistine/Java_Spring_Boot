@@ -63,7 +63,7 @@ public class DependencyConfiguration {
 
     @Bean
     @Scope("singleton")
-    public JwtTokenService jwtService() {
+    public JwtTokenService jwtTokenService() {
         return new JwtTokenImpl();
     }
 }

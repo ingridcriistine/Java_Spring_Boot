@@ -16,8 +16,6 @@ public class UserSecurityImpl implements UserService {
     @Autowired
     PasswordEncoderService service;
 
-    
-
     @Override
     public User login(String login, String password) {
         var user = repo.findByUsername(login);

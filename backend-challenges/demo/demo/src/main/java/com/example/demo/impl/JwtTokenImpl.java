@@ -1,56 +1,72 @@
 package com.example.demo.impl;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.demo.model.User;
+import javax.crypto.SecretKey;
+
+import com.example.demo.dto.Token;
 import com.example.demo.services.JwtTokenService;
 
-public class JwtTokenImpl implements JwtTokenService {
-    
-    private static final String SECRET_KEY = "4Z^XrroxR@dWxqf$mTTKwW$!@#qGr4P"; // Chave secreta utilizada para gerar e verificar o token 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
-    private static final String ISSUER = "user-api"; // Emissor do token
+public class JwtTokenImpl implements JwtTokenService<Token> {
+    private final String SECRET_KEY = "ouqebfdouiebfouqewfnuoqewnhfouewnfouewnh";
+    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hora
 
-    public String generateToken(User user) {
-        try {
-            // Define o algoritmo HMAC SHA256 para criar a assinatura do token passando a chave secreta definida
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-            return JWT.create()
-                    .withIssuer(ISSUER) // Define o emissor do token
-                    .withIssuedAt(creationDate()) // Define a data de emissão do token
-                    .withExpiresAt(expirationDate()) // Define a data de expiração do token
-                    .withSubject(user.getUsername()) // Define o assunto do token (neste caso, o nome de usuário)
-                    .sign(algorithm); // Assina o token usando o algoritmo especificado
-        } catch (JWTCreationException exception){
-            throw new JWTCreationException("Erro ao gerar token.", exception);
+    @Override
+    public String get(Token token) {
+        var claims = new HashMap<String, Object>();
+        
+        claims.put("id", token.getId());
+        claims.put("role", token.getRole());
+
+        return get(claims);
+    }
+
+    @Override
+    public Token validate(String jwt) {
+        try
+        {
+            var map = validateJwt(jwt);
+
+            Token token = new Token();
+            token.setId(Long.parseLong(map.get("id").toString()));
+            token.setRole(map.get("role").toString());
+
+            return token;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return null;
         }
     }
 
-    public String getSubjectFromToken(String token) {
-        try {
-            // Define o algoritmo HMAC SHA256 para verificar a assinatura do token passando a chave secreta definida
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-            return JWT.require(algorithm)
-                    .withIssuer(ISSUER) // Define o emissor do token
-                    .build()
-                    .verify(token) // Verifica a validade do token
-                    .getSubject(); // Obtém o assunto (neste caso, o nome de usuário) do token
-        } catch (JWTVerificationException exception){
-            throw new JWTVerificationException("Token inválido ou expirado.");
-        }
+    private String get(Map<String, Object> customClaims) {
+        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        return Jwts.builder()
+            .claims()
+                .add(customClaims)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .and()
+            .signWith(key)
+            .compact();
     }
 
-    public Instant creationDate() {
-        return ZonedDateTime.now(ZoneId.of("America/Recife")).toInstant();
-    }
-
-    public Instant expirationDate() {
-        return ZonedDateTime.now(ZoneId.of("America/Recife")).plusHours(4).toInstant();
+    private Map<String, Object> validateJwt(String jwt) {
+        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        Claims claims = Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(jwt)
+            .getPayload();
+        
+        return new HashMap<>(claims);
     }
 }

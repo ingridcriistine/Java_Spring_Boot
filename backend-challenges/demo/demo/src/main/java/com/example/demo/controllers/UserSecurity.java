@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.LoginData;
+import com.example.demo.dto.Token;
 import com.example.demo.dto.TokenData;
 import com.example.demo.dto.UserData;
 import com.example.demo.services.JwtTokenService;
@@ -42,8 +43,13 @@ public class UserSecurity {
             return new ResponseEntity<>(new TokenData("Dados inválidos", ""), HttpStatus.OK);
         }
 
-        var token = serviceJwt.generateToken(user);
+        var token = new Token();
+        token.setId(user.getId());
+        token.setEmail(user.getEmail());
+        token.setUsername(user.getUsername());
+        
+        var generateToken = serviceJwt.get(token);
 
-        return new ResponseEntity<>(new TokenData("Token gerado com sucesso!", token), HttpStatus.OK);
+        return new ResponseEntity<>(new TokenData("Token gerado com sucesso!", generateToken), HttpStatus.OK);
     }
 }
