@@ -28,6 +28,10 @@ public class UserSecurityImpl implements UserService {
             }
         }
 
+        if(!service.validatePass(password, user.get(0).getPassword())) {
+            return null;
+        }
+
         return user.get(0);
     }
 

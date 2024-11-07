@@ -14,9 +14,11 @@ public class BcryptPasswordEncoderImpl implements PasswordEncoderService {
     }
 
     @Override
-    public Boolean validatePass(String password)
+    public Boolean validatePass(String password, String passwordEncoded)
     {
-        if(!encode(password).matches(password)) {
+        var bcrypt = new BCryptPasswordEncoder();
+
+        if(!bcrypt.matches(password, passwordEncoded)) {
             return false;
         }
         return true;
