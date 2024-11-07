@@ -23,7 +23,8 @@ public class JwtTokenImpl implements JwtTokenService<Token> {
         var claims = new HashMap<String, Object>();
         
         claims.put("id", token.getId());
-        claims.put("role", token.getRole());
+        claims.put("email", token.getEmail());
+        claims.put("username", token.getUsername());
 
         return get(claims);
     }
@@ -36,7 +37,8 @@ public class JwtTokenImpl implements JwtTokenService<Token> {
 
             Token token = new Token();
             token.setId(Long.parseLong(map.get("id").toString()));
-            token.setRole(map.get("role").toString());
+            token.setEmail(map.get("email").toString());
+            token.setUsername(map.get("username").toString());
 
             return token;
         }

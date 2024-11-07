@@ -23,7 +23,7 @@ public class UserSecurity {
     UserService service;
 
     @Autowired
-    JwtTokenService serviceJwt;
+    JwtTokenService<Token> serviceJwt;
 
     @PostMapping("/user")
     public ResponseEntity<String> createUser(@RequestBody UserData data) {

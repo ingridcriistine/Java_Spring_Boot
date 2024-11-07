@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.dto.Token;
 import com.example.demo.model.Product;
-import com.example.demo.model.User;
 import com.example.demo.repositories.ProductRepository;
 import com.example.demo.services.ProductService;
 
@@ -12,9 +11,6 @@ public class ProductImpl implements ProductService{
 
     @Autowired
     ProductRepository repo;
-
-    @Autowired
-    ProductService service;
 
     @Override
     public Product addProduct(Token token, String titulo, Float valor) {
@@ -24,7 +20,7 @@ public class ProductImpl implements ProductService{
             return null;
         }
 
-        if(!checkEmail(token.getEmail()) || !checkToken(token)) {
+        if(!checkEmail(token.getEmail())) {
             return null;
         }
 
