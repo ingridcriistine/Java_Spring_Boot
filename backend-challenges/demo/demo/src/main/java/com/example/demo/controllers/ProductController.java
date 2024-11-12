@@ -32,6 +32,8 @@ public class ProductController {
             return ResponseEntity.status(403).build();
         }
 
+        service.addProduct(token, data.title(), data.value());
+
         return new ResponseEntity<>("Produto cadastrado com sucesso!", HttpStatus.OK);
     }
 }
